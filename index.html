@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackPulse | Analytics & Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00A86B;
+            --primary-hover: #008f5a;
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --card-bg: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+
+        /* Compact Header */
+        .site-header {
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-logo i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.825rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        /* Split Screen Container */
+        .main-wrapper {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            min-height: calc(100vh - 100px);
+        }
+
+        @media (min-width: 900px) {
+            .main-wrapper {
+                grid-template-columns: 1.1fr 0.9fr;
+            }
+        }
+
+        /* Left Branding Panel */
+        .branding-panel {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-right: 1px solid var(--border-color);
+            padding: 3rem 2.5rem;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 900px) {
+            .branding-panel {
+                display: flex;
+            }
+        }
+
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(0, 168, 107, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 168, 107, 0.3);
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .panel-hero h2 {
+            font-size: 1.75rem;
+            line-height: 1.3;
+            margin: 1rem 0 0.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .panel-hero p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .feature-item i {
+            color: var(--primary);
+            margin-top: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-item h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .feature-item p {
+            font-size: 0.775rem;
+            color: var(--text-muted);
+            margin-top: 0.1rem;
+        }
+
+        .disclaimer-banner {
+            background-color: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.725rem;
+            line-height: 1.4;
+        }
+
+        /* Right Auth Panel */
+        .auth-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .auth-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-header h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .auth-header p {
+            color: var(--text-muted);
+            font-size: 0.825rem;
+            margin-top: 0.25rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background-color: var(--input-bg);
+            padding: 0.2rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.25rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 0.45rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--panel-bg);
+            color: var(--text-main);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.775rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: var(--text-main);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .eye-toggle {
+            position: absolute;
+            right: 0.75rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.65rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .strength-container {
+            margin-top: 0.35rem;
+            display: none;
+        }
+
+        .strength-bar-wrapper {
+            height: 3px;
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 0.2rem;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 0.675rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .error-text {
+            color: #ef4444;
+            font-size: 0.775rem;
+            margin-top: 0.75rem;
+            text-align: center;
+        }
+
+        /* Compact Footer */
+        .site-footer {
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        @media (min-width: 600px) {
+            .site-footer {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <a href="index.html" class="brand-logo">
+            <i class="fa-solid fa-chart-line"></i> TrackPulse
+        </a>
+        <nav class="nav-links">
+            <a href="about.html">About</a>
+            <a href="support.html">Support</a>
+        </nav>
+    </header>
+
+    <main class="main-wrapper">
+        <!-- Left Feature Panel -->
+        <aside class="branding-panel">
+            <div>
+                <span class="feature-badge"><i class="fa-solid fa-bolt"></i> Real-time Analytics</span>
+                <div class="panel-hero">
+                    <h2>Independent Portfolio Tracking Platform</h2>
+                    <p>Monitor your ledger assets, track market signals, and analyze movements with precise data tools.</p>
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <div>
+                            <h4>Read-Only Security</h4>
+                            <p>We never request your private keys or direct transaction permissions.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <div>
+                            <h4>Advanced Metrics</h4>
+                            <p>Clean dashboard views customized for individual ledger tracking needs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="disclaimer-banner">
+                <i class="fa-solid fa-circle-info"></i> TrackPulse is an independent software tool. It is not affiliated with or endorsed by Ripple Labs or the XRP Ledger Foundation.
+            </div>
+        </aside>
+
+        <!-- Right Form Panel -->
+        <section class="auth-panel">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Account Access</h1>
+                    <p>Sign in to open your workspace</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button id="tab-login" class="tab-btn active">Sign In</button>
+                    <button id="tab-signup" class="tab-btn">Register</button>
+                </div>
+
+                <form id="auth-form">
+                    <div class="input-group" id="name-group" style="display: none;">
+                        <label for="auth-name">Full Name</label>
+                        <input type="text" id="auth-name" placeholder="Username">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="auth-email">Email Address</label>
+                        <input type="email" id="auth-email" placeholder="user@example.com" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="auth-password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="auth-password" placeholder="••••••••" required>
+                            <i class="fa-regular fa-eye eye-toggle" id="toggle-password"></i>
+                        </div>
+                        <div class="strength-container" id="strength-container">
+                            <div class="strength-bar-wrapper">
+                                <div class="strength-bar" id="strength-bar"></div>
+                            </div>
+                            <span class="strength-text" id="strength-text"></span>
+                        </div>
+                    </div>
+
+                    <div class="input-group" id="confirm-password-group" style="display: none;">
+                        <label for="auth-confirm-password">Confirm Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="auth-confirm-password" placeholder="••••••••">
+                            <i class="fa-regular fa-eye eye-toggle" id="toggle-confirm-password"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn-primary">Sign In</button>
+                </form>
+                <p id="error-message" class="error-text"></p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="support.html">Support</a>
+        </div>
+        <p>&copy; 2026 TrackPulse. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { auth, db, ADMIN_EMAIL, createUserWithEmailAndPassword, signInWithEmailAndPassword, doc, setDoc, getDoc, signOut } from './app.js';
+
+        const form = document.getElementById('auth-form');
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const nameGroup = document.getElementById('name-group');
+        const confirmPasswordGroup = document.getElementById('confirm-password-group');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorMsg = document.getElementById('error-message');
+        
+        const passwordInput = document.getElementById('auth-password');
+        const confirmPasswordInput = document.getElementById('auth-confirm-password');
+        const togglePassword = document.getElementById('toggle-password');
+        const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+        const strengthContainer = document.getElementById('strength-container');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+
+        let isLoginMode = true;
+
+        function handleCleanErrorMessage(error) {
+            const code = error.code || error.message || "";
+            if (code.includes('email-already-in-use')) return "This email address is already registered.";
+            if (code.includes('wrong-password') || code.includes('user-not-found') || code.includes('invalid-credential')) return "Access Denied. Invalid credentials.";
+            if (code.includes('weak-password')) return "Password must be at least 6 characters long.";
+            if (code.includes('invalid-email')) return "Invalid email format.";
+            if (code.includes('permission-denied')) return "Database error. Check authorization rules.";
+            return "An unexpected error occurred.";
+        }
+
+        tabLogin.addEventListener('click', () => {
+            isLoginMode = true;
+            errorMsg.innerText = "";
+            tabLogin.classList.add('active');
+            tabSignup.classList.remove('active');
+            nameGroup.style.display = 'none';
+            confirmPasswordGroup.style.display = 'none';
+            confirmPasswordInput.removeAttribute('required');
+            strengthContainer.style.display = 'none';
+            submitBtn.innerText = 'Sign In';
+        });
+
+        tabSignup.addEventListener('click', () => {
+            isLoginMode = false;
+            errorMsg.innerText = "";
+            tabSignup.classList.add('active');
+            tabLogin.classList.remove('active');
+            nameGroup.style.display = 'block';
+            confirmPasswordGroup.style.display = 'block';
+            confirmPasswordInput.setAttribute('required', 'true');
+            strengthContainer.style.display = 'block';
+            submitBtn.innerText = 'Create Account';
+        });
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.classList.toggle('fa-eye');
+            togglePassword.classList.toggle('fa-eye-slash');
+        });
+
+        toggleConfirmPassword.addEventListener('click', () => {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            toggleConfirmPassword.classList.toggle('fa-eye');
+            toggleConfirmPassword.classList.toggle('fa-eye-slash');
+        });
+
+        passwordInput.addEventListener('input', () => {
+            if (isLoginMode) return;
+            const pass = passwordInput.value;
+            let score = 0;
+
+            if (!pass) {
+                strengthBar.style.width = '0%';
+                strengthText.innerText = '';
+                return;
+            }
+
+            if (pass.length >= 6) score++;
+            if (pass.length >= 10) score++;
+            if (/[A-Z]/.test(pass)) score++;
+            if (/[0-9]/.test(pass)) score++;
+            if (/[^A-Za-z0-9]/.test(pass)) score++;
+
+            if (score <= 2) {
+                strengthBar.style.width = '33%';
+                strengthBar.style.backgroundColor = '#ef4444';
+                strengthText.innerText = 'Weak';
+                strengthText.style.color = '#ef4444';
+            } else if (score === 3 || score === 4) {
+                strengthBar.style.width = '66%';
+                strengthBar.style.backgroundColor = '#3b82f6';
+                strengthText.innerText = 'Good';
+                strengthText.style.color = '#3b82f6';
+            } else if (score >= 5) {
+                strengthBar.style.width = '100%';
+                strengthBar.style.backgroundColor = '#00A86B';
+                strengthText.innerText = 'Strong';
+                strengthText.style.color = '#00A86B';
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.innerText = "";
+            
+            const email = document.getElementById('auth-email').value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const name = document.getElementById('auth-name').value.trim();
+
+            if (!isLoginMode && password !== confirmPassword) {
+                errorMsg.innerText = "Passwords do not match.";
+                return;
+            }
+
+            try {
+                if (isLoginMode) {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    if (user.email === ADMIN_EMAIL) {
+                        window.location.href = 'admin.html';
+                        return;
+                    }
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists() && userDoc.data().isPaused) {
+                        await signOut(auth);
+                        errorMsg.innerText = "Account suspended by admin.";
+                        return;
+                    }
+                    window.location.href = 'dashboard.html';
+                } else {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    await setDoc(doc(db, "users", user.uid), {
+                        uid: user.uid,
+                        name: name || "User",
+                        email: email,
+                        balance: 0,
+                        isPaused: false,
+                        createdDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                    });
+
+                    if (email === ADMIN_EMAIL) {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            } catch (error) {
+                errorMsg.innerText = handleCleanErrorMessage(error);
+            }
+        });
+    </script>
+</body>
+</html>

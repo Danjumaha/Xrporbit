@@ -1,0 +1,331 @@
+/* style.css - Clean Luxury White & Emerald Green Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+    --bg-primary: #FFFFFF;                  /* Pure White background surfaces */
+    --bg-secondary: #F4F7F5;                /* Premium soft platinum-green background tint */
+    --accent-emerald: #00A86B;              /* Vibrant Emerald Green for active accents & primary actions */
+    --accent-emerald-dark: #007F51;         /* Deep Forest Green for premium look & hover states */
+    --accent-emerald-light: rgba(0, 168, 107, 0.08); /* Transparent soft green pill accents */
+    --text-main: #0C3224;                   /* Ultra-rich Deep Forest Green instead of dark black */
+    --text-muted: #5A756C;                  /* Smooth slate-green tint for secondary captions */
+    --border-color: #DCE5E1;                /* Soft crisp green-gray border lines */
+    --error-color: #E63946;                 /* Refined status red */
+}
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Inter', sans-serif; 
+}
+
+body { 
+    background-color: var(--bg-secondary); 
+    color: var(--text-main); 
+}
+
+/* --- Gateway Wrapper UI (Sign Up / Login) --- */
+.auth-body { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, #E8EFEA 100%); 
+}
+
+.auth-container { 
+    background: var(--bg-primary); 
+    padding: 3rem 2.5rem; 
+    border-radius: 20px; 
+    width: 100%; 
+    max-width: 440px; 
+    box-shadow: 0 15px 35px rgba(12, 50, 36, 0.04); 
+    border: 1px solid var(--border-color); 
+}
+
+.auth-header h1 { 
+    font-size: 2.5rem; 
+    font-weight: 300; 
+    letter-spacing: 8px; 
+    text-align: center; 
+    color: var(--accent-emerald-dark); 
+}
+
+.auth-header p { 
+    color: var(--text-muted); 
+    font-size: 0.75rem; 
+    text-align: center; 
+    margin-bottom: 2.5rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    font-weight: 500;
+}
+
+.auth-tabs { 
+    display: flex; 
+    margin-bottom: 2rem; 
+    border-bottom: 2px solid var(--border-color); 
+}
+
+.auth-tabs button { 
+    flex: 1; 
+    background: none; 
+    border: none; 
+    padding: 0.8rem; 
+    font-size: 0.95rem; 
+    cursor: pointer; 
+    color: var(--text-muted); 
+    transition: all 0.2s; 
+    font-weight: 500; 
+}
+
+.auth-tabs button.active { 
+    color: var(--accent-emerald-dark); 
+    border-bottom: 2px solid var(--accent-emerald); 
+}
+
+/* --- Forms & Luxury Input Fields --- */
+.input-group { 
+    margin-bottom: 1.5rem; 
+}
+
+.input-group label { 
+    display: block; 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 1.5px; 
+    margin-bottom: 0.6rem; 
+    color: var(--text-muted); 
+    font-weight: 600; 
+}
+
+.input-group input, .luxury-select { 
+    width: 100%; 
+    padding: 0.9rem 1.1rem; 
+    border: 1px solid var(--border-color); 
+    border-radius: 10px; 
+    background: var(--bg-secondary); 
+    font-size: 0.95rem; 
+    outline: none; 
+    transition: all 0.2s; 
+    color: var(--text-main); 
+    font-weight: 500;
+}
+
+.input-group input:focus, .luxury-select:focus { 
+    border-color: var(--accent-emerald); 
+    background: var(--bg-primary); 
+    box-shadow: 0 0 0 4px var(--accent-emerald-light);
+}
+
+.micro-select { 
+    padding: 0.4rem 0.6rem; 
+    font-size: 0.8rem; 
+    border-radius: 6px; 
+}
+
+/* --- Premium Buttons Architecture --- */
+.btn-primary { 
+    background: var(--accent-emerald); 
+    color: var(--bg-primary); 
+    border: none; 
+    width: 100%; 
+    padding: 1rem; 
+    font-size: 0.95rem; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease; 
+    box-shadow: 0 4px 12px rgba(0, 168, 107, 0.15);
+}
+
+.btn-primary:hover { 
+    background: var(--accent-emerald-dark); 
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 127, 81, 0.2);
+}
+
+.btn-secondary { 
+    background: var(--bg-primary); 
+    border: 1px solid var(--border-color); 
+    color: var(--accent-emerald-dark); 
+    padding: 0.6rem 1.4rem; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-size: 0.85rem; 
+    font-weight: 600; 
+    transition: all 0.2s; 
+}
+
+.btn-secondary:hover { 
+    color: var(--bg-primary); 
+    background: var(--accent-emerald-dark);
+    border-color: var(--accent-emerald-dark); 
+}
+
+/* --- Client Navigation Bar --- */
+.navbar { 
+    background: var(--bg-primary); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 1.25rem 4%; 
+    border-bottom: 1px solid var(--border-color); 
+}
+
+.logo { 
+    font-weight: 400; 
+    font-size: 1.6rem; 
+    letter-spacing: 4px; 
+    color: var(--accent-emerald-dark); 
+}
+
+.premium-tag { 
+    font-size: 0.65rem; 
+    background: var(--accent-emerald); 
+    color: var(--bg-primary); 
+    padding: 0.25rem 0.6rem; 
+    border-radius: 4px; 
+    font-weight: 600; 
+    margin-left: 6px; 
+    letter-spacing: 1px; 
+}
+
+.admin-tag { 
+    font-size: 0.65rem; 
+    background: var(--accent-emerald-dark); 
+    color: var(--bg-primary); 
+    padding: 0.25rem 0.6rem; 
+    border-radius: 4px; 
+    font-weight: 600; 
+    margin-left: 6px; 
+    letter-spacing: 1px; 
+}
+
+.user-profile { 
+    display: flex; 
+    align-items: center; 
+    gap: 1.5rem; 
+    font-size: 0.95rem; 
+    font-weight: 600; 
+    color: var(--text-main);
+}
+
+/* --- Dashboard Dashboard Layout --- */
+.dashboard-grid { 
+    max-width: 1200px; 
+    margin: 3rem auto; 
+    padding: 0 1.5rem; 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 2rem; 
+}
+
+@media (max-width: 768px) { 
+    .dashboard-grid { grid-template-columns: 1fr; } 
+}
+
+.card { 
+    background: var(--bg-primary); 
+    border: 1px solid var(--border-color); 
+    padding: 2.5rem; 
+    border-radius: 18px; 
+    box-shadow: 0 10px 25px rgba(12, 50, 36, 0.01); 
+}
+
+.balance-card h3, .graph-card h3, .notes-card h3, .withdraw-card h3, .tier-card h3 { 
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    color: var(--text-muted); 
+    margin-bottom: 1.25rem; 
+    font-weight: 600; 
+}
+
+.balance-card h1 { 
+    font-size: 3.8rem; 
+    font-weight: 300; 
+    color: var(--accent-emerald-dark); 
+    margin-bottom: 0.75rem; 
+    letter-spacing: -1px; 
+}
+
+.tier-badge { 
+    background: var(--accent-emerald-light); 
+    color: var(--accent-emerald-dark); 
+    padding: 0.6rem 1.2rem; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    font-size: 0.9rem; 
+    display: inline-block; 
+    border: 1px solid rgba(0, 168, 107, 0.2);
+}
+
+.status-indicator { 
+    font-size: 0.85rem; 
+    color: var(--text-muted); 
+    font-weight: 500; 
+    display: flex; 
+    align-items: center; 
+}
+
+.dot { 
+    height: 9px; 
+    width: 9px; 
+    border-radius: 50%; 
+    margin-right: 8px; 
+    display: inline-block; 
+}
+
+.dot.green { 
+    background-color: var(--accent-emerald); 
+    box-shadow: 0 0 8px var(--accent-emerald);
+}
+
+/* --- Messaging, Logs, Status Labels --- */
+.error-text { color: var(--error-color); font-size: 0.85rem; margin-top: 1.25rem; text-align: center; font-weight: 600; }
+.status-msg { margin-top: 1.25rem; font-size: 0.9rem; font-weight: 600; }
+.status-msg.error { color: var(--error-color); }
+.status-msg.success { color: var(--accent-emerald-dark); }
+.limit-note { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+.limit-note strong { color: var(--accent-emerald-dark); }
+.full-width { width: 100%; }
+
+/* --- Admin Control Dashboard Blueprints --- */
+.admin-container { max-width: 1400px; margin: 3rem auto; padding: 0 1.5rem; }
+.admin-summary-ribbon { margin-bottom: 2rem; }
+
+.summary-box { 
+    background: var(--bg-primary); 
+    padding: 1.5rem 2.2rem; 
+    border-radius: 14px; 
+    border-left: 5px solid var(--accent-emerald); 
+    border-top: 1px solid var(--border-color); 
+    border-right: 1px solid var(--border-color); 
+    border-bottom: 1px solid var(--border-color); 
+    width: fit-content; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+}
+
+.summary-box h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 0.35rem; font-weight: 600; }
+.summary-box h2 { color: var(--accent-emerald-dark); font-size: 2rem; font-weight: 400; }
+
+.table-wrapper { width: 100%; overflow-x: auto; margin-top: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-primary); }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { padding: 1.2rem 1rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border-color); letter-spacing: 1px; font-weight: 600; background: #FAFDFB; }
+td { padding: 1.5rem 1rem; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; vertical-align: middle; color: var(--text-main); }
+
+.user-info-cell { display: flex; flex-direction: column; gap: 0.25rem; }
+.user-info-cell strong { color: var(--text-main); font-weight: 600; }
+.user-info-cell span { color: var(--text-muted); font-size: 0.8rem; }
+
+.table-balance-input { padding: 0.6rem; border: 1px solid var(--border-color); width: 140px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; background: var(--bg-secondary); color: var(--accent-emerald-dark); }
+.table-balance-input:focus { border-color: var(--accent-emerald); background: var(--bg-primary); outline: none; }
+
+/* Status Labels (Active / Suspended) */
+.btn-status { border: none; padding: 0.4rem 1rem; font-size: 0.75rem; border-radius: 50px; cursor: pointer; font-weight: 600; letter-spacing: 0.5px; }
+.btn-status.active { background: #E6F7F0; color: #00875A; border: 1px solid rgba(0, 135, 90, 0.2); }
+.btn-status.paused { background: #FCEBEB; color: #BF2626; border: 1px solid rgba(191, 38, 38, 0.2); }
+.btn-sm { width: auto; padding: 0.6rem 1.2rem; font-size: 0.8rem; border-radius: 8px; }

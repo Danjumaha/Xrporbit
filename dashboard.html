@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackPulse | Core Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #00A86B;
+            --primary-hover: #008f5a;
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --card-bg: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #1e293b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            font-size: 14px;
+        }
+
+        /* Fixed Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem 1rem;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .brand-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-logo i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .tag-secure {
+            font-size: 0.65rem;
+            background: rgba(0, 168, 107, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(0, 168, 107, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            flex-grow: 1;
+        }
+
+        .sidebar-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.825rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-item a:hover, .sidebar-item.active a {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-item.active a {
+            color: var(--primary);
+            background: rgba(0, 168, 107, 0.1);
+            border: 1px solid rgba(0, 168, 107, 0.2);
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .btn-disconnect {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 0.6rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-disconnect:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Mobile Bottom Nav */
+        .mobile-nav-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            z-index: 999;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+        }
+
+        .mobile-nav-bar a, .mobile-nav-bar button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.7rem;
+            text-decoration: none;
+            gap: 3px;
+            font-weight: 500;
+        }
+
+        .mobile-nav-bar .active-nav-item {
+            color: var(--primary);
+        }
+
+        /* Main Workspace Wrapper */
+        .dashboard-wrapper {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-navbar {
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            font-size: 0.775rem;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status-dot {
+            height: 7px;
+            width: 7px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .dashboard-main {
+            padding: 1.75rem 2rem 4rem 2rem;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Identity Banner Strip */
+        .profile-identity-strip {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .profile-meta-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar-shield {
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 168, 107, 0.1);
+            border: 1px solid rgba(0, 168, 107, 0.3);
+            color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .profile-text-group h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .verified-badge {
+            font-size: 0.7rem;
+            background: rgba(0, 168, 107, 0.15);
+            color: var(--primary);
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(0, 168, 107, 0.2);
+        }
+
+        .profile-text-group p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .tier-badge {
+            font-weight: 700;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+
+        /* Structured Card Grid Layout */
+        .shaped-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.25rem;
+        }
+
+        .col-6 { grid-column: span 6; }
+        .col-12 { grid-column: span 12; }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value-large {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .card-subtext {
+            font-size: 0.775rem;
+            color: var(--text-muted);
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Form Inputs & Upload Box */
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: var(--text-muted);
+        }
+
+        .input-group select, .input-group input {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: 0.825rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group select:focus, .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.65rem;
+            background: var(--input-bg);
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(0, 168, 107, 0.05);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 0.65rem;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.825rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-dark {
+            background-color: #334155;
+        }
+
+        .btn-dark:hover {
+            background-color: #475569;
+        }
+
+        .status-message {
+            font-size: 0.775rem;
+            margin-top: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Chart Canvas Area */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            margin-top: 0.5rem;
+        }
+
+        /* Deposit Table Styling */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.825rem;
+            text-align: left;
+        }
+
+        th {
+            background: var(--input-bg);
+            padding: 0.65rem 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 0.75rem 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .dashboard-wrapper { margin-left: 0; width: 100%; }
+            .mobile-nav-bar { display: flex; }
+            .col-6 { grid-column: span 12; }
+            .dashboard-main { padding: 1.25rem 1rem 5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Desktop Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <a href="index.html" class="brand-logo">
+                <i class="fa-solid fa-chart-line"></i> TrackPulse
+            </a>
+            <span class="tag-secure">SECURE</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active">
+                <a href="#"><i class="fa-solid fa-chart-pie"></i> <span>Core Terminal</span></a>
+            </li>
+            <li class="sidebar-item" id="admin-nav-link" style="display: none;">
+                <a href="admin.html" style="color: var(--primary);"><i class="fa-solid fa-user-gear"></i> <span>Admin Panel</span></a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <button id="logout-btn" class="btn-disconnect"><i class="fa-solid fa-arrow-right-from-bracket"></i> Disconnect</button>
+        </div>
+    </aside>
+
+    <!-- Mobile Bottom Fixed Bar -->
+    <div class="mobile-nav-bar">
+        <a href="#" class="active-nav-item"><i class="fa-solid fa-chart-pie fa-lg"></i><span>Terminal</span></a>
+        <a href="admin.html" id="mobile-admin-link" style="display: none; color: var(--primary);"><i class="fa-solid fa-user-gear fa-lg"></i><span>Admin</span></a>
+        <button id="mobile-logout-btn" style="cursor: pointer;"><i class="fa-solid fa-arrow-right-from-bracket fa-lg"></i><span>Exit</span></button>
+    </div>
+
+    <!-- Main Content Workspace -->
+    <div class="dashboard-wrapper">
+        <header class="top-navbar">
+            <div></div> 
+            <div class="status-indicator">
+                <span class="status-dot"></span> Core Node Live
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <!-- Profile Identity Banner -->
+            <div class="profile-identity-strip">
+                <div class="profile-meta-details">
+                    <div class="profile-avatar-shield"><i class="fa-solid fa-user-shield"></i></div>
+                    <div class="profile-text-group">
+                        <h2><span id="user-display-name">Loading...</span> <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Connected</span></h2>
+                        <p id="user-display-email">Loading...</p>
+                    </div>
+                </div>
+                <div class="tier-badge" id="current-tier-display">Tier 1</div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="shaped-grid">
+                
+                <!-- Balance Overview -->
+                <div class="card col-6">
+                    <div>
+                        <div class="card-title">Total Balance</div>
+                        <div class="card-value-large" id="user-balance">$0.00</div>
+                    </div>
+                    <div class="card-subtext">
+                        <i class="fa-solid fa-vault" style="color: var(--primary);"></i> Secure Vault Active
+                    </div>
+                </div>
+
+                <!-- Deposit Ratio -->
+                <div class="card col-6">
+                    <div>
+                        <div class="card-title">Deposit Allocation Status</div>
+                        <div class="card-value-large" id="user-deposit-percentage" style="color: var(--primary);">0%</div>
+                    </div>
+                    <div class="card-subtext">
+                        <i class="fa-solid fa-pie-chart"></i> Percentage of fund total currently deposited
+                    </div>
+                </div>
+
+                <!-- Identity Upgrade Section -->
+                <div class="card col-6">
+                    <div>
+                        <div class="card-title">Identity Verification</div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                            Current Status: <strong id="verification-status" style="color: var(--primary);">Unverified</strong>
+                        </p>
+                        
+                        <div class="input-group">
+                            <label>Target Tier Level</label>
+                            <select id="upgrade-tier-select">
+                                <option value="Tier 2 (Advanced Limits)">Tier 2 (Photo ID Required)</option>
+                                <option value="Tier 3 (Institutional VIP)">Tier 3 (Corporate Verification)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Upload Document Proof</label>
+                            <div class="file-upload-wrapper">
+                                <label for="identity-file-input" class="file-upload-label" id="file-label-text">
+                                    <i class="fa-solid fa-camera"></i> Select Document
+                                </label>
+                                <input type="file" id="identity-file-input" accept="image/*" style="display:none;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button id="upgrade-btn" class="btn-action"><i class="fa-solid fa-cloud-arrow-up"></i> Submit Verification</button>
+                        <p id="tier-status-msg" class="status-message"></p>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Section -->
+                <div class="card col-6">
+                    <div>
+                        <div class="card-title">Withdraw Funds</div>
+                        <p style="font-size: 0.775rem; color: #f87171; margin-bottom: 1rem;">
+                            Minimum Withdrawal Threshold: <strong>$850,000.00</strong>
+                        </p>
+                        <div class="input-group">
+                            <label>XRP Wallet Address</label>
+                            <input type="text" id="withdraw-address" placeholder="Enter destination ledger address">
+                        </div>
+                    </div>
+
+                    <div>
+                        <button id="withdraw-btn" class="btn-action btn-dark">Execute Withdrawal Request</button>
+                        <p id="withdraw-status" class="status-message"></p>
+                    </div>
+                </div>
+
+                <!-- Growth Graph Chart -->
+                <div class="card col-12">
+                    <div class="card-title">Balance Growth Performance</div>
+                    <div class="chart-container">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Deposit History Table -->
+                <div class="card col-12">
+                    <div class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> Recent Deposit Activity</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Deposit Amount</th>
+                                    <th>Fund Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deposit-history-body">
+                                <tr>
+                                    <td colspan="3" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">
+                                        No deposits logged. Workspace awaiting configuration.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase Modular JavaScript Logic -->
+    <script type="module">
+        import { auth, db, ADMIN_EMAIL, onAuthStateChanged, doc, getDoc, updateDoc, setDoc, signOut } from './app.js';
+
+        let currentBalance = 0;
+        let currentUserRef = null;
+        let uploadedDocumentUrl = ""; 
+
+        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dytzpxabq/image/upload";
+        const CLOUDINARY_PRESET = "Yan-Flow";
+
+        // File upload event listener using Cloudinary API
+        document.getElementById('identity-file-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            const labelText = document.getElementById('file-label-text');
+            if (!file) return;
+
+            labelText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading...`;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_PRESET);
+
+            try {
+                const response = await fetch(CLOUDINARY_URL, { method: "POST", body: formData });
+                const jsonResult = await response.json();
+                
+                if (jsonResult.secure_url) {
+                    uploadedDocumentUrl = jsonResult.secure_url;
+                    labelText.style.borderColor = "var(--primary)";
+                    labelText.style.color = "var(--primary)";
+                    labelText.innerHTML = `<i class="fa-solid fa-circle-check"></i> Document Attached`;
+                } else {
+                    throw new Error("Upload failed");
+                }
+            } catch (err) {
+                console.error(err);
+                labelText.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:var(--danger)"></i> Error. Try Again.`;
+            }
+        });
+
+        // Authentication state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            if (user.email === ADMIN_EMAIL) {
+                document.getElementById('admin-nav-link').style.display = 'block';
+                document.getElementById('mobile-admin-link').style.display = 'flex';
+            }
+
+            currentUserRef = doc(db, "users", user.uid);
+            
+            try {
+                const userDoc = await getDoc(currentUserRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.isPaused) {
+                        await signOut(auth);
+                        window.location.href = 'index.html';
+                        return;
+                    }
+                    loadUserData(userData, user.email);
+                } else {
+                    const initialData = {
+                        name: user.displayName || user.email.split('@')[0],
+                        email: user.email,
+                        balance: 0,
+                        tier: "Tier 1 (Basic Access)",
+                        verificationStatus: "Unverified",
+                        isPaused: false,
+                        depositPercentage: 0,
+                        depositHistory: [],
+                        createdDate: new Date().toLocaleDateString()
+                    };                    
+                    await setDoc(currentUserRef, initialData);
+                    loadUserData(initialData, user.email);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('user-display-name').innerText = "Error Loading";
+                document.getElementById('user-display-email').innerText = error.message;
+            }
+        });
+
+        function loadUserData(userData, email) {
+            currentBalance = userData.balance || 0;
+            const depositPercentage = userData.depositPercentage || 0;
+            const depositHistory = userData.depositHistory || [];
+            
+            document.getElementById('user-display-name').innerText = userData.name || "User";
+            document.getElementById('user-display-email').innerText = email;
+            document.getElementById('user-balance').innerText = '$' + Number(currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('current-tier-display').innerText = userData.tier || "Tier 1";
+            document.getElementById('verification-status').innerText = userData.verificationStatus || "Unverified";
+            document.getElementById('user-deposit-percentage').innerText = depositPercentage + '%';
+            
+            renderChart(currentBalance);
+            renderDepositHistory(depositHistory);
+        }
+
+        function renderDepositHistory(history) {
+            const tbody = document.getElementById('deposit-history-body');
+            if (!history || history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">No deposits logged. Workspace awaiting configuration.</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = "";
+            const sortedHistory = [...history].reverse();
+            sortedHistory.forEach(dep => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${dep.date}</td>
+                    <td style="font-weight:600;">$${Number(dep.amount).toLocaleString()}</td>
+                    <td style="color: var(--primary); font-weight:600;">${dep.percentage}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('upgrade-btn').addEventListener('click', async () => {
+            const targetTier = document.getElementById('upgrade-tier-select').value;
+            const statusMsg = document.getElementById('tier-status-msg');
+
+            if (currentUserRef) {
+                const payload = {
+                    tier: targetTier,
+                    verificationStatus: "Pending Review"
+                };
+                if (uploadedDocumentUrl) {
+                    payload.documentProofUrl = uploadedDocumentUrl; 
+                }
+
+                await updateDoc(currentUserRef, payload);
+                document.getElementById('current-tier-display').innerText = targetTier;
+                document.getElementById('verification-status').innerText = "Pending Review";
+                
+                statusMsg.style.color = "var(--primary)";
+                statusMsg.innerText = "Submitted. Awaiting review.";
+            }
+        });
+
+        document.getElementById('withdraw-btn').addEventListener('click', () => {
+            const statusMsg = document.getElementById('withdraw-status');
+            if (currentBalance < 850000) {
+                statusMsg.style.color = "#ef4444";
+                statusMsg.innerText = `Insufficient balance. Need $850,000 minimum.`;
+            } else {
+                statusMsg.style.color = "var(--primary)";
+                statusMsg.innerText = "Withdrawal request submitted.";
+            }
+        });
+
+        function triggerLogout() {
+            signOut(auth).then(() => { window.location.href = 'index.html'; });
+        }
+        document.getElementById('logout-btn').addEventListener('click', triggerLogout);
+        document.getElementById('mobile-logout-btn').addEventListener('click', triggerLogout);
+
+        let activeChartInstance = null;
+        function renderChart(balance) {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            const coreValue = balance > 0 ? balance : 25000; 
+            const dataPoints = [coreValue * 0.15, coreValue * 0.45, coreValue * 0.60, coreValue * 0.82, balance];
+            
+            if (activeChartInstance) {
+                activeChartInstance.destroy();
+            }
+
+            activeChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Start', 'Phase 1', 'Phase 2', 'Phase 3', 'Current'],
+                    datasets: [{
+                        borderColor: '#00A86B',
+                        backgroundColor: 'rgba(0, 168, 107, 0.08)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#00A86B',
+                        tension: 0.25,
+                        data: dataPoints,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', font: { size: 10 } } }, 
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } } 
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

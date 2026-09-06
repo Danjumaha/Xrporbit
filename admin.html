@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackPulse | Admin Operations Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00A86B;
+            --primary-hover: #008f5a;
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --card-bg: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.15);
+            --success-bg: rgba(0, 168, 107, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            font-size: 14px;
+        }
+
+        /* Header Navigation */
+        .admin-nav {
+            background: var(--panel-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-group i {
+            color: var(--primary);
+        }
+
+        .admin-badge {
+            background: rgba(0, 168, 107, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(0, 168, 107, 0.3);
+            font-size: 0.65rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-nav {
+            padding: 0.55rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-secondary {
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--danger-bg);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        /* Admin Workspace Layout */
+        .admin-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem 4rem 1.5rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .summary-card h4 {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+
+        .summary-card h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .summary-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            background: rgba(0, 168, 107, 0.1);
+            border: 1px solid rgba(0, 168, 107, 0.2);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        /* Management Panel Card */
+        .management-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .panel-header {
+            margin-bottom: 1.25rem;
+        }
+
+        .panel-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+
+        .panel-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Table Design */
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.825rem;
+            white-space: nowrap;
+        }
+
+        th {
+            background: var(--input-bg);
+            padding: 0.85rem 1rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            color: var(--text-main);
+            background: var(--panel-bg);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Cell Specific Styles */
+        .user-info-cell strong {
+            display: block;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .user-info-cell span {
+            color: var(--text-muted);
+            font-size: 0.775rem;
+        }
+
+        .luxury-select {
+            padding: 0.45rem 0.55rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-size: 0.75rem;
+            outline: none;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .luxury-select:focus {
+            border-color: var(--primary);
+        }
+
+        .table-input {
+            width: 100px;
+            padding: 0.45rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .table-input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-status.active {
+            background: var(--success-bg);
+            color: var(--primary);
+            border: 1px solid rgba(0, 168, 107, 0.3);
+        }
+
+        .btn-status.paused {
+            background: var(--danger-bg);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-save {
+            padding: 0.45rem 0.85rem;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.775rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .btn-save:hover {
+            background: var(--primary-hover);
+        }
+
+        .proof-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .proof-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .admin-nav {
+                padding: 0.85rem 1rem;
+            }
+            .admin-container {
+                padding: 0 1rem 3rem 1rem;
+                margin: 1rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Operations Bar -->
+    <header class="admin-nav">
+        <div class="logo-group">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>TrackPulse</span>
+            <span class="admin-badge">ADMIN CORE</span>
+        </div>
+        <div class="nav-actions">
+            <button id="back-dash-btn" class="btn-nav btn-secondary">
+                <i class="fa-solid fa-desktop"></i> User View
+            </button>
+            <button id="logout-btn" class="btn-nav btn-danger">
+                <i class="fa-solid fa-power-off"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Admin Workspace -->
+    <main class="admin-container">
+        <!-- Metric Summary -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div>
+                    <h4>Total Registered Users</h4>
+                    <h2 id="total-users-count">0</h2>
+                </div>
+                <div class="summary-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Operations Table -->
+        <div class="management-card">
+            <div class="panel-header">
+                <h3>System Accounts & Balance Control</h3>
+                <p>Modify accounts, assign deposits, update percentage ratios, and review verification proofs.</p>
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Details</th>
+                            <th>Joined</th>
+                            <th>Tier & Verification</th>
+                            <th>Current Balance</th>
+                            <th>Deposit ($)</th>
+                            <th>Deposit %</th>
+                            <th>Adjust Balance ($)</th>
+                            <th>Account Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase Script Logic -->
+    <script type="module">
+        import { auth, db, ADMIN_EMAIL, onAuthStateChanged, signOut, collection, getDocs, doc, updateDoc, arrayUnion } from './app.js';
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user || user.email !== ADMIN_EMAIL) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadUsers();
+        });
+
+        async function loadUsers() {
+            const tableBody = document.getElementById('users-table-body');
+            tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2.5rem; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading account records...</td></tr>`;
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                tableBody.innerHTML = "";
+                let userCount = 0;
+
+                querySnapshot.forEach((userDoc) => {
+                    const uid = userDoc.id;
+                    const data = userDoc.data();
+                    if(data.email === ADMIN_EMAIL) return; 
+
+                    userCount++;
+                    const tr = document.createElement('tr');
+
+                    let documentMarkup = `<span style="font-size:0.75rem; color: var(--text-muted);">No ID Document</span>`;
+                    if (data.documentProofUrl) {
+                        documentMarkup = `<a href="${data.documentProofUrl}" target="_blank" class="proof-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Review ID Document</a>`;
+                    }
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="user-info-cell">
+                                <strong>${data.name || 'User'}</strong>
+                                <span>${data.email}</span>
+                            </div>
+                        </td>
+                        <td>${data.createdDate || 'N/A'}</td>
+                        <td>
+                            <div style="font-weight: 600; font-size:0.825rem;">${data.tier || 'Tier 1'}</div>
+                            <div style="font-size: 0.775rem; color: var(--text-muted); margin-top:2px;">${data.verificationStatus || 'Unverified'}</div>
+                            ${documentMarkup}
+                            <div>
+                                <select id="verify-${uid}" class="luxury-select">
+                                    <option value="">-- Change Status --</option>
+                                    <option value="Verified">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <strong style="color: var(--primary); font-size:0.9rem;">$${Number(data.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</strong>
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" class="table-input" id="dep-${uid}" placeholder="0.00">
+                        </td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:4px;">
+                                <input type="number" step="0.1" class="table-input" id="perc-${uid}" value="${data.depositPercentage || 0}" style="width:70px;"> %
+                            </div>
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" class="table-input" id="adj-${uid}" placeholder="+/-" style="width:90px;">
+                        </td>
+                        <td>
+                            <button class="btn-status ${data.isPaused ? 'paused' : 'active'}" data-uid="${uid}" data-paused="${data.isPaused}">
+                                ${data.isPaused ? 'Suspended' : 'Active'}
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn-save save-btn" data-id="${uid}" data-name="${data.name || 'User'}"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+
+                    // Account Suspension / Active Toggle
+                    const pauseBtn = tr.querySelector(`button.btn-status[data-paused]`);
+                    if(pauseBtn) {
+                        pauseBtn.addEventListener('click', async (e) => {
+                            const targetUid = e.target.getAttribute('data-uid');
+                            const currentPausedState = e.target.getAttribute('data-paused') === 'true';
+                            await updateDoc(doc(db, "users", targetUid), { isPaused: !currentPausedState });
+                            loadUsers();
+                        });
+                    }
+
+                    // Save Modifications Button
+                    tr.querySelector('.save-btn').addEventListener('click', async (e) => {
+                        const saveUid = e.target.closest('.save-btn').getAttribute('data-id');
+                        const clientName = e.target.closest('.save-btn').getAttribute('data-name');
+                        
+                        const depositAmount = parseFloat(document.getElementById(`dep-${saveUid}`).value) || 0;
+                        const percentage = parseFloat(document.getElementById(`perc-${saveUid}`).value) || 0;
+                        const balanceAdjustment = parseFloat(document.getElementById(`adj-${saveUid}`).value) || 0;
+                        const verifyStatus = document.getElementById(`verify-${saveUid}`).value;
+
+                        const currentBalance = data.balance || 0;
+                        let newBalance = currentBalance;
+                        let updatePayload = {
+                            depositPercentage: percentage
+                        };
+
+                        // Process Deposit
+                        if (depositAmount > 0) {
+                            newBalance += depositAmount;
+
+                            const depositRecord = {
+                                amount: depositAmount,
+                                percentage: percentage,
+                                date: new Date().toLocaleDateString()
+                            };
+
+                            updatePayload.balance = newBalance;
+                            updatePayload.depositHistory = arrayUnion(depositRecord);
+                        }
+
+                        // Process Balance Adjustment
+                        if (balanceAdjustment !== 0) {
+                            newBalance += balanceAdjustment;
+                            updatePayload.balance = newBalance;
+                        }
+
+                        if (verifyStatus) {
+                            updatePayload.verificationStatus = verifyStatus;
+                        }
+
+                        await updateDoc(doc(db, "users", saveUid), updatePayload);
+                        
+                        let message = `Updated ${clientName}.`;
+                        if (depositAmount > 0) message += ` Deposit: $${depositAmount}.`;
+                        if (balanceAdjustment !== 0) message += ` Balance adjustment: ${balanceAdjustment > 0 ? '+' : ''}$${balanceAdjustment}.`;
+                        message += ` New total balance: $${newBalance.toLocaleString()}`;
+                        
+                        alert(message);
+                        loadUsers();
+                    });
+                });
+
+                document.getElementById('total-users-count').innerText = userCount;
+            } catch (error) {
+                console.error(error);
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:2rem; color: var(--danger);">Error: ${error.message}</td></tr>`;
+            }
+        }
+
+        document.getElementById('back-dash-btn').addEventListener('click', () => { window.location.href = 'dashboard.html'; });
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => { window.location.href = 'index.html'; });
+        });
+    </script>
+</body>
+</html>

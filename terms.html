@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | TrackPulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00A86B;
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+
+        .navbar {
+            background: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo { font-size: 1.1rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .brand-logo i { color: var(--primary); }
+
+        .btn-back { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; }
+
+        .container { max-width: 900px; margin: 3rem auto; padding: 0 1.5rem; flex-grow: 1; }
+
+        .content-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2.5rem; }
+
+        h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .last-updated { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 2rem; }
+
+        h3 { font-size: 1.1rem; color: var(--text-main); margin: 1.5rem 0 0.5rem 0; font-weight: 600; }
+        p { color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; font-size: 0.875rem; }
+
+        footer { background: var(--panel-bg); border-top: 1px solid var(--border-color); padding: 1.5rem 2rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: auto; }
+        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.75rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .footer-links a:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand-logo"><i class="fa-solid fa-chart-line"></i> TrackPulse</a>
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to App</a>
+    </nav>
+
+    <main class="container">
+        <div class="content-card">
+            <h1>Terms of Service</h1>
+            <div class="last-updated">Effective Date: January 1, 2026</div>
+
+            <h3>1. Acceptance of Terms</h3>
+            <p>By accessing or using the TrackPulse platform, terminal tools, or APIs, you agree to be bound by these Terms of Service and all applicable global financial regulatory guidelines.</p>
+
+            <h3>2. User Accounts & Verification</h3>
+            <p>Users are required to complete identity verification (KYC/AML) based on their account tier. You are responsible for maintaining the confidentiality of your credentials and account activities.</p>
+
+            <h3>3. Deposits & Withdrawals</h3>
+            <p>Withdrawals and transfer executions are subject to system thresholds and security reviews. Minimum withdrawal limits apply as specified within your dashboard workspace.</p>
+
+            <h3>4. System Modifications & Pause States</h3>
+            <p>TrackPulse reserves the right to temporarily suspend or pause accounts undergoing compliance inspection or showing security anomalies to preserve network integrity.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="support.html">Support</a>
+        </div>
+        <div>&copy; 2026 TrackPulse. All rights reserved.</div>
+    </footer>
+
+</body>
+</html>

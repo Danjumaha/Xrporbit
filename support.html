@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Console | TrackPulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00A86B;
+            --primary-hover: #008f5a;
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+
+        .navbar { background: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .brand-logo { font-size: 1.1rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .brand-logo i { color: var(--primary); }
+
+        .btn-back { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; }
+
+        .container { max-width: 800px; margin: 3rem auto; padding: 0 1.5rem; flex-grow: 1; width: 100%; }
+        .content-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2.5rem; }
+
+        h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.875rem; }
+
+        .input-group { margin-bottom: 1.25rem; }
+        .input-group label { display: block; font-size: 0.775rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.35rem; }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover { background: var(--primary-hover); }
+
+        footer { background: var(--panel-bg); border-top: 1px solid var(--border-color); padding: 1.5rem 2rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: auto; }
+        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.75rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .footer-links a:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand-logo"><i class="fa-solid fa-chart-line"></i> TrackPulse</a>
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to App</a>
+    </nav>
+
+    <main class="container">
+        <div class="content-card">
+            <h1>Support & Help Terminal</h1>
+            <p class="subtitle">Have a query regarding account tiers or withdrawals? Submit a ticket below.</p>
+
+            <form id="supportForm" onsubmit="event.preventDefault(); alert('Ticket submitted. An analyst will respond shortly.');">
+                <div class="input-group">
+                    <label>Your Email Address</label>
+                    <input type="email" placeholder="name@domain.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Subject</label>
+                    <input type="text" placeholder="Withdrawal, Tier Verification, etc." required>
+                </div>
+                <div class="input-group">
+                    <label>Message</label>
+                    <textarea rows="5" placeholder="Describe your inquiry..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Submit Ticket</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="support.html">Support</a>
+        </div>
+        <div>&copy; 2026 TrackPulse. All rights reserved.</div>
+    </footer>
+
+</body>
+</html>

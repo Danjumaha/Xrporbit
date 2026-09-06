@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XRP Central Core | Admin Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f6f8f6;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .admin-nav {
+            background: #ffffff;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .admin-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        .admin-summary-ribbon { margin-bottom: 2rem; }
+        .summary-box {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            display: inline-block;
+            min-width: 300px;
+        }
+        .summary-box h4 { margin:0 0 8px 0; color:#6b7280; font-size:0.85rem; text-transform:uppercase; }
+        .summary-box h2 { margin:0; color:#111827; font-size:2rem; }
+        
+        .management-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        .table-wrapper { overflow-x: auto; margin-top: 1.5rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;            text-align: left;
+            font-size: 0.9rem;
+        }
+        th {
+            background: #f9fafb;
+            padding: 1rem;
+            color: #4b5563;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+        }
+        .user-info-cell strong { display: block; color:#111827; font-size:0.95rem; }
+        .user-info-cell span { color:#6b7280; font-size:0.8rem; }
+        
+        .luxury-select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            font-size: 0.8rem;
+        }
+        .table-input {
+            width: 100px;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-weight: 600;
+        }
+        .btn-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-status.active { background: #e6f7f0; color: #00A86B; }
+        .btn-status.paused { background: #fee2e2; color: #ef4444; }
+        
+        .btn-primary.btn-sm {
+            padding: 7px 14px;
+            background: #00A86B;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .btn-primary.btn-sm:hover { background: #008f5b; }
+        
+        .proof-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #3a86ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="admin-nav">
+        <div class="logo" style="font-weight:700; font-size:1.3rem;">XRP <span style="background:#111827; color:#fff; font-size:0.65rem; padding:3px 6px; border-radius:4px; margin-left:4px;">ADMIN</span></div>
+        <div>
+            <button id="back-dash-btn" class="btn-secondary" style="margin-right:10px; padding:6px 12px; border-radius:6px; cursor:pointer; background:#fff; border:1px solid #d1d5db;">User View</button>
+            <button id="logout-btn" class="btn-secondary" style="padding:6px 12px; border-radius:6px; cursor:pointer; background:#ef4444; color:#fff; border:none;">Logout</button>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-summary-ribbon">
+            <div class="summary-box">
+                <h4>Total Users</h4>
+                <h2 id="total-users-count">0</h2>
+            </div>
+        </div>
+
+        <div class="card management-card">
+            <h3 style="margin:0; font-size:1.1rem; color:#111827;">User Management</h3>
+            <p style="font-size:0.85rem; color:#6b7280; margin:5px 0 0 0;">Set deposits, percentages, and adjust balances for each user.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Joined</th>
+                            <th>Verification</th>
+                            <th>Current Balance</th>
+                            <th>Deposit Amount ($)</th>
+                            <th>Deposit %</th>
+                            <th>Adjust Balance ($)</th>
+                            <th>Status</th>                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { auth, db, ADMIN_EMAIL, onAuthStateChanged, signOut, collection, getDocs, doc, updateDoc, arrayUnion } from './app.js';
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user || user.email !== ADMIN_EMAIL) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadUsers();
+        });
+
+        async function loadUsers() {
+            const tableBody = document.getElementById('users-table-body');
+            tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2.5rem; color:#6b7280;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>`;
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                tableBody.innerHTML = "";
+                let userCount = 0;
+
+                querySnapshot.forEach((userDoc) => {
+                    const uid = userDoc.id;
+                    const data = userDoc.data();
+                    if(data.email === ADMIN_EMAIL) return; 
+
+                    userCount++;
+                    const tr = document.createElement('tr');
+
+                    let documentMarkup = `<span style="font-size:0.75rem; color:#9ca3af;">No ID</span>`;
+                    if (data.documentProofUrl) {
+                        documentMarkup = `<a href="${data.documentProofUrl}" target="_blank" class="proof-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> View</a>`;
+                    }
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="user-info-cell">
+                                <strong>${data.name || 'User'}</strong>
+                                <span>${data.email}</span>
+                            </div>
+                        </td>                        <td>${data.createdDate || 'N/A'}</td>
+                        <td>
+                            <div style="font-weight: 600; font-size:0.85rem;">${data.tier || 'Tier 1'}</div>
+                            <div style="font-size: 0.8rem; color: #4b5563; margin-top:2px;">${data.verificationStatus || 'Unverified'}</div>
+                            ${documentMarkup}
+                            <div style="margin-top:8px;">
+                                <select id="verify-${uid}" class="luxury-select" style="font-size:0.75rem; padding:3px;">
+                                    <option value="">-- Change Status --</option>
+                                    <option value="Verified">Approve</option>
+                                    <option value="Rejected">Reject</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <strong style="color:#00A86B;">$${Number(data.balance || 0).toLocaleString()}</strong>
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" class="table-input" id="dep-${uid}" placeholder="Amount">
+                        </td>
+                        <td>
+                            <input type="number" step="0.1" class="table-input" id="perc-${uid}" value="${data.depositPercentage || 0}" style="width:70px;"> %
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" class="table-input" id="adj-${uid}" placeholder="+/-" style="width:90px;">
+                        </td>
+                        <td>
+                            <button class="btn-status ${data.isPaused ? 'paused' : 'active'}" data-uid="${uid}" data-paused="${data.isPaused}">
+                                ${data.isPaused ? 'Suspended' : 'Active'}
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn-primary btn-sm save-btn" data-id="${uid}" data-name="${data.name || 'User'}"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+
+                    // Pause/Active Toggle
+                    const pauseBtn = tr.querySelector(`button.btn-status[data-paused]`);
+                    if(pauseBtn) {
+                        pauseBtn.addEventListener('click', async (e) => {
+                            const targetUid = e.target.getAttribute('data-uid');
+                            const currentPausedState = e.target.getAttribute('data-paused') === 'true';
+                            await updateDoc(doc(db, "users", targetUid), { isPaused: !currentPausedState });
+                            loadUsers();
+                        });
+                    }
+
+                    // Save Button
+                    tr.querySelector('.save-btn').addEventListener('click', async (e) => {
+                        const saveUid = e.target.closest('.save-btn').getAttribute('data-id');                        const clientName = e.target.closest('.save-btn').getAttribute('data-name');
+                        
+                        const depositAmount = parseFloat(document.getElementById(`dep-${saveUid}`).value) || 0;
+                        const percentage = parseFloat(document.getElementById(`perc-${saveUid}`).value) || 0;
+                        const balanceAdjustment = parseFloat(document.getElementById(`adj-${saveUid}`).value) || 0;
+                        const verifyStatus = document.getElementById(`verify-${saveUid}`).value;
+
+                        const currentBalance = data.balance || 0;
+                        let newBalance = currentBalance;
+                        let updatePayload = {
+                            depositPercentage: percentage
+                        };
+
+                        // Handle deposit
+                        if (depositAmount > 0) {
+                            newBalance += depositAmount;
+
+                            const depositRecord = {
+                                amount: depositAmount,
+                                percentage: percentage,
+                                date: new Date().toLocaleString()
+                            };
+
+                            updatePayload.balance = newBalance;
+                            updatePayload.depositHistory = arrayUnion(depositRecord);
+                        }
+
+                        // Handle balance adjustment (can be positive or negative)
+                        if (balanceAdjustment !== 0) {
+                            newBalance += balanceAdjustment;
+                            updatePayload.balance = newBalance;
+                        }
+
+                        if (verifyStatus) {
+                            updatePayload.verificationStatus = verifyStatus;
+                        }
+
+                        await updateDoc(doc(db, "users", saveUid), updatePayload);
+                        
+                        let message = `Updated ${clientName}.`;
+                        if (depositAmount > 0) message += ` Deposit: $${depositAmount}.`;
+                        if (balanceAdjustment !== 0) message += ` Balance adjustment: ${balanceAdjustment > 0 ? '+' : ''}$${balanceAdjustment}.`;
+                        message += ` New balance: $${newBalance.toLocaleString()}`;
+                        
+                        alert(message);
+                        loadUsers();
+                    });
+                });
+
+                document.getElementById('total-users-count').innerText = userCount;            } catch (error) {
+                console.error(error);
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:2rem; color:#ef4444;">Error: ${error.message}</td></tr>`;
+            }
+        }
+
+        document.getElementById('back-dash-btn').addEventListener('click', () => { window.location.href = 'dashboard.html'; });
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => { window.location.href = 'index.html'; });
+        });
+    </script>
+</body>
+</html>

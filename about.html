@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | TrackPulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00A86B;
+            --primary-hover: #008f5a;
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+        }
+
+        .navbar {
+            background: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand-logo i { color: var(--primary); }
+
+        .btn-back {
+            background: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { border-color: var(--primary); color: var(--primary); }
+
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            flex-grow: 1;
+        }
+
+        .content-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+        }
+
+        h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+        .subtitle { color: var(--primary); font-weight: 600; margin-bottom: 2rem; font-size: 0.9rem; }
+
+        p { color: var(--text-muted); line-height: 1.7; margin-bottom: 1.25rem; font-size: 0.9rem; }
+
+        .grid-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .highlight-item {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 8px;
+        }
+
+        .highlight-item i { color: var(--primary); font-size: 1.2rem; margin-bottom: 0.75rem; display: block; }
+        .highlight-item h4 { color: var(--text-main); font-size: 0.9rem; margin-bottom: 0.35rem; }
+        .highlight-item p { margin-bottom: 0; font-size: 0.8rem; }
+
+        footer {
+            background: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: auto;
+        }
+
+        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.75rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .footer-links a:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand-logo"><i class="fa-solid fa-chart-line"></i> TrackPulse</a>
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to App</a>
+    </nav>
+
+    <main class="container">
+        <div class="content-card">
+            <h1>About TrackPulse</h1>
+            <p class="subtitle">Empowering digital core operations and global ledger tracking.</p>
+
+            <p>TrackPulse provides institutional-grade telemetry and asset monitoring solutions tailored for high-frequency digital finance operations. Founded with a vision to bring absolute transparency and real-time ledger intelligence to digital asset management, our infrastructure ensures seamless asset accounting and verification.</p>
+
+            <div class="grid-highlights">
+                <div class="highlight-item">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h4>Institutional Security</h4>
+                    <p>Built with multi-layer encryption and rigorous identity validation frameworks.</p>
+                </div>
+                <div class="highlight-item">
+                    <i class="fa-solid fa-bolt"></i>
+                    <h4>Real-Time Analytics</h4>
+                    <p>Instant visualization of growth performance, balances, and ledger allocations.</p>
+                </div>
+                <div class="highlight-item">
+                    <i class="fa-solid fa-globe"></i>
+                    <h4>Global Availability</h4>
+                    <p>24/7 uninterrupted node connectivity across distributed server infrastructure.</p>
+                </div>
+            </div>
+
+            <p>Whether managing personal vaults or enterprise-level liquidity tracking, TrackPulse delivers precision tools designed for absolute reliability and speed.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="support.html">Support</a>
+        </div>
+        <div>&copy; 2026 TrackPulse. All rights reserved.</div>
+    </footer>
+
+</body>
+</html>
